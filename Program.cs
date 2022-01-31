@@ -11,7 +11,7 @@ namespace IpCruncher
     class Program
     {
         const uint globalStartAddress = 0x0;
-        const uint globalEndAddress = globalStartAddress + 0xffff;
+        const uint globalEndAddress = globalStartAddress + 0xffffffff;
         static readonly int coreCount = Environment.ProcessorCount;
         static void Main(string[] args)
         {
@@ -104,7 +104,7 @@ namespace IpCruncher
                         streamWriter.Dispose();
                     }
                 stopwatch.Stop();
-                ulong count = globalEndAddress - globalStartAddress+1;
+                ulong count = (ulong)(globalEndAddress - globalStartAddress)+1;
                 Console.WriteLine($"Finished. Uniques: {totalUniquesCount}/{count} ({(100 * (double)totalUniquesCount / (double)count).ToString("0.00")}%). Time: {stopwatch.ElapsedMilliseconds} ms.");
             }
             catch
@@ -114,7 +114,7 @@ namespace IpCruncher
         }
         static (uint, uint) GetBatchForCore(int core)
         {
-            uint coreStartAddress = (uint)(globalStartAddress + (globalEndAddress - globalStartAddress + 1) / (ulong)coreCount * (ulong)core);
+            uint coreStartAddress = (uint)(globalStartAddress + ((ulong)(globalEndAddress - globalStartAddress) + 1) / (ulong)coreCount * (ulong)core);
             uint coreEndAddress = (uint)(coreStartAddress + (globalEndAddress - globalStartAddress) / (ulong)coreCount);
             return (coreStartAddress, coreEndAddress);
         }
